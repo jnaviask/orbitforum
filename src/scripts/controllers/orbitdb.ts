@@ -33,6 +33,10 @@ interface IThreadData {
 export async function makeThread(addr, author: string, title: string) {
   const orbit = await initOrbit();
   const db = await orbit.eventlog(addr);
+  console.log(db);
+  db.events.on('write', (e) => {
+    console.log(e);
+  });
   return db.add({ author: author, title: title }).then(() => {
     console.log('thread added to ipfs store');
   });

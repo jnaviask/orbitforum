@@ -1,5 +1,5 @@
-import { default as IPFS } from 'ipfs';
-import { default as OrbitDB } from 'orbit-db';
+import * as IPFS from 'ipfs';
+const OrbitDB = require('orbit-db')
 import { EventStore } from 'orbit-db-eventstore';
 
 function hashCode(s: string): number {
@@ -18,13 +18,20 @@ function hashCode(s: string): number {
 const THREADS = {};
 let ORBITDB = null;
 
-function initOrbit(): OrbitDB {
-  if (ORBITDB) {
-    return ORBITDB;
-  }
-  const ipfs = new IPFS({});
-  ORBITDB = new OrbitDB(ipfs);
-  return ORBITDB;
+function initOrbit(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if (ORBITDB) {
+      resolve(ORBITDB);
+    }
+    const ipfs = new IPFS({ EXPERIMENTAL: { pubsub: true }});
+    ipfs.on('error', (err) => {
+      reject(err);
+    });
+    ipfs.on('ready', () => {
+      ORBITDB = new OrbitDB(ipfs);
+      resolve(ORBITDB);
+    });
+  });
 }
 
 interface IThreadData {
@@ -32,24 +39,29 @@ interface IThreadData {
   title: string;
 }
 
-function subscribeThreads(): void {
-  const db = initOrbit();
-  db.eventlog<IThreadData>('threads').then((log: EventStore<IThreadData>) => {
-    log.events.on('replicated', () => {
-      console.log('replicated threads');
-      const items = log.iterator({ limit: -1 }).collect().map((e) => {
-        const data = e.payload.value;
-        const author = data.author;
-        const title = data.title;
-        const hash = '' + hashCode(author + title);
-        if (!THREADS[hash]) {
-          THREADS[hash] = subscribeComments(hash);
-        }
-      });
+async function subscribeThreads() {
+  const orbit = await initOrbit();
+  const db = await orbit.open('/orbitdb/QmeovgZ6JeneF2qASACwbmPFK8KEwzCGxLF8fZGNrpLoF6/threads', {
+    create: false,
+    overwrite: false,
+    replicate: true,
+    localOnly: false,
+  });
+  console.log(db);
+  db.events.on('write', () => {
+    console.log('replicated threads');
+    const items = db.iterator({ limit: -1 }).collect().map((e) => {
+      const data = e.payload.value;
+      const author = data.author;
+      const title = data.title;
+      const hash = '' + hashCode(author + title);
+      if (!THREADS[hash]) {
+        //THREADS[hash] = subscribeComments(hash);
+      }
     });
   });
 }
-
+/*
 function subscribeComments(hash: string): void {
   const db = initOrbit();
   db.eventlog(`thread.${hash}`).then((log) => {
@@ -58,5 +70,5 @@ function subscribeComments(hash: string): void {
     });
   });
 }
-
+*/
 subscribeThreads();

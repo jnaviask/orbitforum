@@ -38,7 +38,7 @@ export default app;
 
 async function initServices() {
   const db = await subscribeThreads();
-  makeThread(db, 'jnaviask', 'test thread');
+  makeThread(db, 'jnaviask', 'test thread 2');
 }
 
 initServices();
