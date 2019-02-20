@@ -1,0 +1,6 @@
+.DS_Store
+*.pyc
+/venv
+/build
+node_modules/
+jsconfig.json

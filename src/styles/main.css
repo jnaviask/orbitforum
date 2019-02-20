@@ -1,0 +1,14 @@
+/*
+* MainPage
+*/
+.MainPage {
+  padding-bottom: 60px;
+}
+.MainPage .container {
+  display: flex;
+  padding-top: 30px;
+}
+.MainPage .empty-text {
+  margin: 12px 0;
+  color: #777;
+}

@@ -1,0 +1,188 @@
+/*
+ * Globals
+ */
+* {
+    box-sizing: border-box;
+}
+html, body {
+    position: relative;
+    height: 100%;
+}
+html {
+    font-family: ibm-plex-sans-webfont, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 15px;
+    line-height: 1.4;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+
+.mithril-app {
+    background: #f8f8f8;
+    min-height: 100%;
+}
+.mithril-app.light-bg {
+    background: #fff;
+}
+.wrapper.dark-bg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #f8f8f8;
+    border-bottom: 1px solid #eee;
+}
+.container {
+    position: relative;
+    min-width: 960px;
+    max-width: 1140px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.container.content-container {
+    padding-top: 20px;
+    padding-bottom: 80px;
+}
+.container.content-container-large {
+    padding-top: 30px;
+    padding-bottom: 80px;
+}
+.page-title {
+    font-size: 22px;
+    font-weight: 500;
+}
+.page-subtitle {
+    clear: both;
+    font-size: 14px;
+    font-weight: 500;
+    color: #aaa;
+}
+.section-title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 34px;
+}
+.section-heading {
+    font-size: 20px;
+    width: 100%;
+    display: flex;
+    padding: 40px 0;
+}
+.section-heading > .section-title,
+.section-heading > .page-title {
+    flex: 1;
+}
+.clear {
+    clear: both;
+}
+
+button,
+a.btn {
+    font-size: 16px;
+    padding: 7px 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    box-shadow: none;
+    background: #eee;
+    color: #111;
+    transition: 0.07s background ease-in-out;
+    text-decoration: none;
+}
+button:hover,
+a.btn:hover {
+    background: #e7e7e7;
+}
+button[type="submit"],
+a.btn.btn-submit {
+    background-color: #08c;
+    color: #fff;
+}
+button[type="submit"]:hover,
+a.btn.btn-submit:hover {
+    background-color: #3c95c1;
+}
+button.btn-danger,
+a.btn.btn-danger {
+    background-color: #d41a31;
+    color: #fff;
+};
+button.btn-danger:hover,
+a.btn.btn-danger:hover {
+    background-color: #da4053;
+};
+button:disabled,
+a.btn.btn-disabled, {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/*
+ * Modal
+ */
+.Modal .overlay {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: fixed;
+    background: rgba(0,0,0,0.3);
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.Modal .popup {
+    position: relative;
+    min-width: 440px;
+    max-width: 800px;
+    max-height: 96%;
+    background: white;
+    overflow: hidden;
+    overflow-y: scroll;
+    max-width: 92%;
+    border-radius: 3px;
+    z-index: 1001;
+}
+.Modal .modal-title {
+    padding: 22px 28px 19px;
+    border-bottom: 1px solid #eee;
+}
+.Modal .modal-title h1,
+.Modal .modal-title h2,
+.Modal .modal-title h3 {
+    font-size: 20px;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+}
+.Modal .modal-body {
+    padding: 28px;
+    border-bottom: 1px solid #eee;
+}
+.Modal .modal-actions {
+    padding: 22px 28px;
+    float: right;
+}
+
+.Modal .compact-modal-title {
+    padding: 24px 28px 12px;
+}
+.Modal .compact-modal-title h1,
+.Modal .compact-modal-title h2,
+.Modal .compact-modal-title h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+.Modal .compact-modal-body {
+    padding: 0 28px;
+}
+.Modal .compact-modal-actions {
+    padding: 12px 28px;
+    float: right;
+}

@@ -1,0 +1,47 @@
+@font-face {
+    font-family: faktpro-webfont;
+    src: url("FaktPro-Blond.eot");
+    src: url("FaktPro-Blond.eot?#iefix") format("embedded-opentype"), url("FaktPro-Blond.woff") format("woff"), url("FaktPro-Blond_web.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: faktpro-webfont;
+    src: url("FaktPro-BlondItalic.eot");
+    src: url("FaktPro-BlondItalic.eot?#iefix") format("embedded-opentype"), url("FaktPro-BlondItalic.woff") format("woff"), url("FaktPro-BlondItalic_web.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: faktpro-webfont;
+    src: url("FaktPro-Normal.eot");
+    src: url("FaktPro-Normal.eot?#iefix") format("embedded-opentype"), url("FaktPro-Normal.woff") format("woff"), url("FaktPro-Normal_web.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: faktpro-webfont;
+    src: url("FaktPro-NormalItalic.eot");
+    src: url("FaktPro-NormalItalic.eot?#iefix") format("embedded-opentype"), url("FaktPro-NormalItalic.woff") format("woff"), url("FaktPro-NormalItalic_web.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: faktpro-webfont;
+    src: url("FaktPro-Medium.eot");
+    src: url("FaktPro-Medium.eot?#iefix") format("embedded-opentype"), url("FaktPro-Medium.woff") format("woff"), url("FaktPro-Medium_web.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: faktpro-webfont;
+    src: url("FaktPro-MediumItalic.eot");
+    src: url("FaktPro-MediumItalic.eot?#iefix") format("embedded-opentype"), url("FaktPro-MediumItalic.woff") format("woff"), url("FaktPro-MediumItalic_web.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 500;
+}

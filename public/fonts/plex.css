@@ -1,0 +1,84 @@
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 100;
+    font-style: normal;
+    src: url('./otf/IBMPlexSans-ExtraLight.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 100;
+    font-style: italic;
+    src: url('./otf/IBMPlexSans-ExtraLightItalic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 300;
+    font-style: normal;
+    src: url('./otf/IBMPlexSans-Light.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 300;
+    font-style: italic;
+    src: url('./otf/IBMPlexSans-LightItalic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 300;
+    font-style: normal;
+    src: url('./otf/IBMPlexSans-Text.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 300;
+    font-style: italic;
+    src: url('./otf/IBMPlexSans-TextItalic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 400;
+    font-style: normal;
+    src: url('./otf/IBMPlexSans-Regular.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 400;
+    font-style: italic;
+    src: url('./otf/IBMPlexSans-Italic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 500;
+    font-style: normal;
+    src: url('./otf/IBMPlexSans-Medium.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 500;
+    font-style: italic;
+    src: url('./otf/IBMPlexSans-MediumItalic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 600;
+    font-style: normal;
+    src: url('./otf/IBMPlexSans-SemiBold.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 600;
+    font-style: italic;
+    src: url('./otf/IBMPlexSans-SemiBoldItalic.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 700;
+    font-style: normal;
+    src: url('./otf/IBMPlexSans-Bold.otf') format('opentype');
+}
+@font-face {
+    font-family: 'ibm-plex-sans-webfont';
+    font-weight: 700;
+    font-style: italic;
+    src: url('./otf/IBMPlexSans-BoldItalic.otf') format('opentype');
+}
