@@ -1,6 +1,6 @@
 import * as m from 'mithril';
 import { ThreadsStore } from 'models/stores';
-import { subscribeThreads } from 'controllers/orbitdb';
+import { subscribeThreads, makeThread } from 'controllers/orbitdb';
 
 /*
  * state
@@ -10,6 +10,7 @@ import { subscribeThreads } from 'controllers/orbitdb';
 // TODO: replace with a real React state store
 const app = {
   orbitdb: null,
+  threaddb: null,
 
   vm: {
 
@@ -35,8 +36,9 @@ app.threads = new ThreadsStore();
 
 export default app;
 
-function initServices() {
-  subscribeThreads();
+async function initServices() {
+  const db = await subscribeThreads();
+  makeThread(db, 'jnaviask', 'test thread');
 }
 
 initServices();

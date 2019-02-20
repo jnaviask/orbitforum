@@ -1,11 +1,11 @@
 import * as IPFS from 'ipfs';
-import { default as OrbitDB } from 'orbit-db';
+const OrbitDB = require('orbit-db')
 import app from 'state';
 import { EventStore } from 'orbit-db-eventstore';
 import { Thread } from 'models/thread';
 import { Store } from 'orbit-db-store';
 
-export function initOrbit(): Promise<OrbitDB> {
+export function initOrbit(): Promise<any> {
   return new Promise((resolve, reject) => {
     if (app.orbitdb) {
       resolve(app.orbitdb);
@@ -30,10 +30,10 @@ interface IThreadData {
   title: string;
 }
 
-export async function makeThread(author: string, title: string) {
-  const db = await initOrbit();
-  const log = await db.eventlog('threads');
-  return log.add({ author: author, title: title }).then(() => {
+export async function makeThread(addr, author: string, title: string) {
+  const orbit = await initOrbit();
+  const db = await orbit.eventlog(addr);
+  return db.add({ author: author, title: title }).then(() => {
     console.log('thread added to ipfs store');
   });
 }
@@ -41,17 +41,16 @@ export async function makeThread(author: string, title: string) {
 export async function subscribeThreads() {
   const orbit = await initOrbit();
   console.log(orbit);
-  const address = await orbit.determineAddress('threads', 'eventlog', {
-    write: [ '*' ]
-  });
-  const db = await orbit.open(address, {
-    localOnly: false,
-    create: true,
-    type: 'eventlog',
+  // const db = await orbit.create('threads', 'eventlog', { });
+  const db = await orbit.open('/orbitdb/QmeovgZ6JeneF2qASACwbmPFK8KEwzCGxLF8fZGNrpLoF6/threads', {
+    create: false,
     overwrite: false,
     replicate: true,
+    localOnly: false,
   });
-  db.events.on('replicated', () => {
+  console.log(db);
+  db.events.on('write', () => {
+    console.log('write');
     const items = db.iterator({ limit: -1 }).collect().map((e) => {
       const data: IThreadData = e.payload.value;
       const author = data.author;
@@ -62,8 +61,9 @@ export async function subscribeThreads() {
         subscribeComments(thread);
       }
     });
-    console.log('got items: ', items);
   });
+  app.threaddb = db.address;
+  return db.address;
 }
 
 // --------
