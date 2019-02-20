@@ -12,3 +12,45 @@
   margin: 12px 0;
   color: #777;
 }
+
+/*
+* Threads
+*/
+ .ThreadRow {
+  position: relative;
+  background: #fff;
+  padding: 14px 32px;
+  border: 1px solid #eee;
+  margin-top: -1px;
+  cursor: pointer;
+  z-index: 1;
+}
+.ThreadRow:hover {
+  border-color: #ddd;
+  z-index: 2;
+}
+.ThreadRow .thread-title {
+  font-size: 16px;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.ThreadRow .thread-meta .thread-author {
+  position: relative;
+  top: 4px;
+}
+.ThreadRow .thread-meta .thread-author .user__display-name {
+  font-weight: 400;
+}
+.ThreadRow .thread-meta {
+  font-size: 14px;
+  display: flex;
+}
+.ThreadRow .thread-meta .thread-author,
+.ThreadRow .thread-meta .thread-category,
+.ThreadRow .thread-meta .thread-status,
+.ThreadRow .thread-meta .thread-counts,
+.ThreadRow .thread-meta .thread-datetime {
+  display: inline-block;
+  min-width: 84px;
+  margin-right: 30px;
+}

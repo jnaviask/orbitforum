@@ -23,7 +23,6 @@
     "@babel/preset-env": "^7.2.3",
     "@types/express": "^4.16.0",
     "@types/mithril": "^1.1.14",
-    "@types/orbit-db": "https://github.com/orbitdb/orbit-db-types.git",
     "@types/toastr": "^2.1.35",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.4",

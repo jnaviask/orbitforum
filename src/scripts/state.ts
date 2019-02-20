@@ -1,5 +1,6 @@
 import * as m from 'mithril';
 import { ThreadsStore } from 'models/stores';
+import { subscribeThreads } from 'controllers/orbitdb';
 
 /*
  * state
@@ -35,7 +36,7 @@ app.threads = new ThreadsStore();
 export default app;
 
 function initServices() {
-  console.log('init');
+  subscribeThreads();
 }
 
 initServices();
