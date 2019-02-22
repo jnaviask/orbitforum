@@ -1,16 +1,23 @@
-import * as IPFS from 'ipfs';
+const IPFS = require('ipfs')
 const OrbitDB = require('orbit-db')
 import app from 'state';
 import { EventStore } from 'orbit-db-eventstore';
 import { Thread } from 'models/thread';
 import { Store } from 'orbit-db-store';
 
+const ipfsOptions = {
+  EXPERIMENTAL: {
+    pubsub: true
+  }
+};
+
 export function initOrbit(): Promise<any> {
   return new Promise((resolve, reject) => {
     if (app.orbitdb) {
       resolve(app.orbitdb);
     }
-    const ipfs = new IPFS({ EXPERIMENTAL: { pubsub: true }});
+    const ipfs = new IPFS(ipfsOptions);
+    console.log(ipfs);
     ipfs.on('error', (err) => {
       reject(err);
     });
@@ -32,10 +39,10 @@ interface IThreadData {
 
 export async function makeThread(addr, author: string, title: string) {
   const orbit = await initOrbit();
-  const db = await orbit.eventlog(addr);
-  console.log(db);
+  const db = await orbit.log('threads');
+  await db.load();
   db.events.on('write', (e) => {
-    console.log(e);
+    console.log('thread written to address:' + e);
   });
   return db.add({ author: author, title: title }).then(() => {
     console.log('thread added to ipfs store');
@@ -44,17 +51,10 @@ export async function makeThread(addr, author: string, title: string) {
 
 export async function subscribeThreads() {
   const orbit = await initOrbit();
-  console.log(orbit);
-  // const db = await orbit.create('threads', 'eventlog', { });
-  const db = await orbit.open('/orbitdb/QmeovgZ6JeneF2qASACwbmPFK8KEwzCGxLF8fZGNrpLoF6/threads', {
-    create: false,
-    overwrite: false,
-    replicate: true,
-    localOnly: false,
-  });
-  console.log(db);
-  db.events.on('write', () => {
-    console.log('write');
+  const db = await orbit.log('threads');
+  await db.load();
+  db.events.on('replicated', (address) => {
+    console.log('replicated: ' + address);
     const items = db.iterator({ limit: -1 }).collect().map((e) => {
       const data: IThreadData = e.payload.value;
       const author = data.author;
@@ -81,14 +81,14 @@ interface ICommentData {
 
 export async function createCommentDb(thread: Thread): Promise<Store> {
   const db = await initOrbit();
-  return db.create(`thread.${thread.hash}`, 'eventlog', {
+  return db.create(`thread.${thread.hash}`, 'log', {
     write: ['*'],
   });
 }
 
 export async function makeComment(thread: Thread, author: string, comment: string): Promise<void> {
   const db = await initOrbit();
-  const log = await db.eventlog(`thread.${thread.hash}`);
+  const log = await db.log(`thread.${thread.hash}`);
   return log.add({ author: author, comment: comment }).then(() => {
     console.log('comment added to ipfs store');
   });
@@ -97,7 +97,7 @@ export async function makeComment(thread: Thread, author: string, comment: strin
 export async function subscribeComments(thread: Thread) {
   const db = await initOrbit();
   const hash = thread.hash;
-  db.eventlog(`thread.${hash}`).then((log: EventStore<ICommentData>) => {
+  db.log(`thread.${hash}`).then((log: EventStore<ICommentData>) => {
     log.events.on('replicated', () => {
       const items = log.iterator({ limit: -1 }).collect().map((e) => {
         const data = e.payload.value;

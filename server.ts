@@ -1,4 +1,4 @@
-import * as IPFS from 'ipfs';
+const IPFS = require('ipfs')
 const OrbitDB = require('orbit-db')
 import { EventStore } from 'orbit-db-eventstore';
 
@@ -18,12 +18,18 @@ function hashCode(s: string): number {
 const THREADS = {};
 let ORBITDB = null;
 
+const ipfsOptions = {
+  EXPERIMENTAL: {
+    pubsub: true
+  }
+};
+
 function initOrbit(): Promise<any> {
   return new Promise((resolve, reject) => {
     if (ORBITDB) {
       resolve(ORBITDB);
     }
-    const ipfs = new IPFS({ EXPERIMENTAL: { pubsub: true }});
+    const ipfs = new IPFS(ipfsOptions);
     ipfs.on('error', (err) => {
       reject(err);
     });
@@ -41,14 +47,10 @@ interface IThreadData {
 
 async function subscribeThreads() {
   const orbit = await initOrbit();
-  const db = await orbit.open('/orbitdb/QmeovgZ6JeneF2qASACwbmPFK8KEwzCGxLF8fZGNrpLoF6/threads', {
-    create: false,
-    overwrite: false,
-    replicate: true,
-    localOnly: false,
-  });
-  console.log(db);
-  db.events.on('write', () => {
+  const db = await orbit.log('/orbitdb/QmYUPrGcEkWceFyGRpfdMnQK9E2ZHjxzGnW5i8HbiQ35Uj/threads');
+  await db.load();
+  console.log(db.events);
+  db.events.on('replicated', () => {
     console.log('replicated threads');
     const items = db.iterator({ limit: -1 }).collect().map((e) => {
       const data = e.payload.value;
