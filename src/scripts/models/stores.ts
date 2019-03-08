@@ -1,4 +1,4 @@
-import { Thread, hashCode } from './thread';
+import { Thread } from './thread';
 
 export class ThreadsStore {
   private _store: Thread[];
@@ -17,8 +17,5 @@ export class ThreadsStore {
   }
   public getByHash(hash: string) {
     return this._storeHash[hash];
-  }
-  public getByAuthorTitle(author: string, title: string) {
-    return this._storeHash['' + hashCode(author + title)];
   }
 }

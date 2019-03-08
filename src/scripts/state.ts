@@ -11,6 +11,7 @@ import { subscribeThreads, makeThread } from 'controllers/orbitdb';
 const app = {
   orbitdb: null,
   threaddb: null,
+  maxthreadhash: null,
 
   vm: {
 
@@ -37,8 +38,7 @@ app.threads = new ThreadsStore();
 export default app;
 
 async function initServices() {
-  const db = await subscribeThreads();
-  makeThread(db, 'jnaviask', 'test thread 2');
+  await subscribeThreads();
 }
 
 initServices();

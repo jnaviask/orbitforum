@@ -2,6 +2,7 @@ import 'styles/main.css';
 
 import * as m from 'mithril';
 import app from 'state';
+import { makeThread } from 'controllers/orbitdb';
 
 const ThreadRow = {
   view: (vnode) => {
@@ -19,7 +20,11 @@ const ThreadRow = {
         thread.title,
       ]),
       m('.thread-meta', [
-        m('span.thread-author', thread.author),
+        m('.thread-author', thread.author),
+        m('.thread-hash', thread.hash),
+        m('.thread-comments', [
+          'Comments: ' + thread.comments.length
+        ]),
       ]),
     ]);
   }
@@ -28,10 +33,33 @@ const ThreadRow = {
 const MainPage = {
   view: (vnode) => {
     const threads = app.threads.getAll();
+    vnode.attrs.title = '';
+    vnode.attrs.author = '';
     return m('.MainPage', [
       m('.container', [
+        m('.thread-create', [
+          m('input[type="text"]', {
+            placeholder: '<Thread Title>',
+            onchange: (e) => {
+              e.redraw = false;
+              vnode.attrs.title = e.target.value;
+            },
+          }),
+          m('input[type="text"]', {
+            placeholder: '<Author>',
+            onchange: (e) => {
+              e.redraw = false;
+              vnode.attrs.author = e.target.value;
+            },
+          }),
+          m('button', {
+            onclick: () => {
+              makeThread(vnode.attrs.author, vnode.attrs.title);
+            },
+          }, 'Submit'),
+        ]),
         threads.length > 0 ?
-          threads.map((thread) => m(ThreadRow, { thread: thread })) :
+          threads.reverse().map((thread) => m(ThreadRow, { thread: thread })) :
           m('.empty-text', 'No threads found')
       ]),
     ]);

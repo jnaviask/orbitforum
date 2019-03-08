@@ -6,11 +6,16 @@
 }
 .MainPage .container {
   display: flex;
+  flex-direction: column;
   padding-top: 30px;
 }
 .MainPage .empty-text {
   margin: 12px 0;
   color: #777;
+}
+
+.thread-create input {
+  margin-right: 10px;
 }
 
 /*
@@ -46,10 +51,8 @@
   display: flex;
 }
 .ThreadRow .thread-meta .thread-author,
-.ThreadRow .thread-meta .thread-category,
-.ThreadRow .thread-meta .thread-status,
-.ThreadRow .thread-meta .thread-counts,
-.ThreadRow .thread-meta .thread-datetime {
+.ThreadRow .thread-meta .thread-hash,
+.ThreadRow .thread-meta .thread-comments {
   display: inline-block;
   min-width: 84px;
   margin-right: 30px;
