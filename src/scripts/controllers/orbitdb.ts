@@ -1,7 +1,7 @@
 const IPFS = require('ipfs');
 const OrbitDB = require('orbit-db');
-import { Thread } from 'models/thread';
-import { ThreadsStore } from 'models/stores';
+import { Thread } from '../models/thread';
+import { ThreadsStore } from '../models/stores';
 
 const ipfsOptions = {
   EXPERIMENTAL: {
