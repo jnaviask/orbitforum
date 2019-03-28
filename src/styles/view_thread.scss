@@ -1,0 +1,127 @@
+.ViewThreadPage {
+  .thread-page {
+      border: 1px solid #eee;
+      background: #fff;
+  }
+
+  // header
+  .thread-page-header {
+      padding: 42px 48px 46px;
+      border-bottom: 1px solid #eee;
+      .thread-hash {
+          color: #999;
+          font-size: 14px;
+      }
+      .thread-title {
+          font-size: 20px;
+          font-weight: 500;
+          letter-spacing: -0.1px;
+          margin-bottom: 4px;
+      }
+      .thread-meta {
+          font-size: 94%;
+          color: #999;
+          > * {
+              margin-right: 10px;
+          }
+          .thread-voting-positive {
+              color: #3F7600;
+          }
+          .thread-voting-negative {
+              color: #E51932;
+          }
+          .thread-hash {
+              margin-top: 6px;
+          }
+      }
+  }
+
+  // body
+  .thread-page-body {
+      display: flex;
+      padding: 0 48px;
+  }
+  .thread-page-left {
+      flex: 1;
+      padding: 30px 60px 60px 0;
+      min-height: 300px;
+  }
+  .thread-page-right {
+      width: 300px;
+      border-left: 1px solid #eee;
+      padding: 30px 0px 60px 40px;
+  }
+
+  // body left
+  h4 {
+      font-size: 16px;
+      font-weight: 500;
+  }
+  .thread-page-comment {
+      margin-top: 6px;
+      margin-bottom: 22px;
+  }
+  .thread-page-comment svg.feather-icon {
+      position: relative;
+      top: 2px;
+      margin: 0 4px;
+  }
+  .thread-page-comment .User {
+      margin-right: 10px;
+  }
+  .thread-comment-datetime {
+      position: relative;
+      top: -4px;
+      display: inline-block;
+      font-size: 14px;
+      color: #aaa;
+      margin-right: 10px;
+  }
+  .thread-comment-flair {
+      display: inline-block;
+      color: #555;
+      font-size: 13px;
+      position: relative;
+      top: -4px;
+      margin-right: 8px;
+  }
+  .thread-comment-text {
+      padding: 5px 0;
+  }
+  .thread-comment-text p {
+      margin: 0 0 6px 0;
+  }
+
+  // body right
+  .ThreadVotingStatus,
+  .ThreadVotingActions {
+      margin-bottom: 32px;
+  }
+  .ThreadVotingStatus {
+  }
+  .ThreadVotingActions {
+  }
+  .ThreadVotingResults {
+  }
+}
+
+.ThreadComments {
+  .thread-comment {
+      margin-bottom: 20px;
+  }
+  .edg-balance {
+      position: relative;
+      top: -4px;
+      font-size: 94%;
+      color: #aaa;
+      margin-left: 5px;
+  }
+  textarea.new-thread-comment {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+  }
+}

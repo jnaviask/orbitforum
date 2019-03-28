@@ -12,6 +12,8 @@ const app = {
   orbitdb: null,
   threaddb: null,
   maxthreadhash: null,
+  commentdbs: {},
+  maxcommenthash: {},
 
   vm: {
 

@@ -9,6 +9,7 @@ import app from 'state';
 import { Layout } from 'views/layouts';
 import PageNotFound from 'views/404';
 import MainPage from 'views/main';
+import ViewThreadPage from 'views/view_thread';
 
 import { notifyError } from 'controllers/notifications';
 
@@ -30,19 +31,18 @@ $(() => {
         ]);
       },
     },
-    /*
     '/:hash': {
       render: (vnode) => {
-        let proposal;
+        let thread;
         try {
-          proposal = app.proposals.getByHash(vnode.attrs.hash);
+          thread = app.threads.getByHash(vnode.attrs.hash);
         } catch (e) {
           return m(Layout, [ m(PageNotFound) ]);
         }
         return m(Layout, [
-          m(ViewProposalPage, { proposal: proposal }),
+          m(ViewThreadPage, { thread: thread }),
         ]);
       },
-    },*/
+    },
   });
 });
