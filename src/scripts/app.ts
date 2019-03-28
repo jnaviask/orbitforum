@@ -12,6 +12,15 @@ import MainPage from 'views/main';
 import ViewThreadPage from 'views/view_thread';
 
 import { notifyError } from 'controllers/notifications';
+import { getThreadStore, addEventHandlers, loadThreads } from 'controllers/orbitdb';
+
+async function initServices() {
+  await addEventHandlers(() => m.redraw(), () => m.redraw());
+  await loadThreads();
+  m.redraw();
+}
+
+initServices();
 
 /*
  * router
@@ -35,7 +44,7 @@ $(() => {
       render: (vnode) => {
         let thread;
         try {
-          thread = app.threads.getByHash(vnode.attrs.hash);
+          thread = getThreadStore().getByHash(vnode.attrs.hash);
         } catch (e) {
           return m(Layout, [ m(PageNotFound) ]);
         }

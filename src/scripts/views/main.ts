@@ -2,7 +2,7 @@ import 'styles/main.css';
 
 import * as m from 'mithril';
 import app from 'state';
-import { makeThread } from 'controllers/orbitdb';
+import { makeThread, getThreadStore } from 'controllers/orbitdb';
 
 const ThreadRow = {
   view: (vnode) => {
@@ -31,7 +31,7 @@ const ThreadRow = {
 
 const MainPage = {
   view: (vnode) => {
-    const threads = app.threads.getAll();
+    const threads = getThreadStore().getAll();
     vnode.attrs.title = '';
     vnode.attrs.author = '';
     return m('.MainPage', [

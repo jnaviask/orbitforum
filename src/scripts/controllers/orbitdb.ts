@@ -1,7 +1,7 @@
 const IPFS = require('ipfs');
 const OrbitDB = require('orbit-db');
-import app from 'state';
 import { Thread } from 'models/thread';
+import { ThreadsStore } from 'models/stores';
 
 const ipfsOptions = {
   EXPERIMENTAL: {
@@ -9,10 +9,19 @@ const ipfsOptions = {
   }
 };
 
-export function initOrbit(): Promise<any> {
+let ORBITDB = null;
+let THREADDB = null;
+let MAXTHREADHASH = null;
+const COMMENTDBS = {};
+const MAXCOMMENTHASH = {};
+const THREADSTORE = new ThreadsStore();
+
+let COMMENTHANDLER = null;
+
+function initOrbit(): Promise<any> {
   return new Promise((resolve, reject) => {
-    if (app.orbitdb) {
-      resolve(app.orbitdb);
+    if (ORBITDB) {
+      resolve(ORBITDB);
       return;
     }
     const ipfs = new IPFS(ipfsOptions);
@@ -21,8 +30,8 @@ export function initOrbit(): Promise<any> {
     });
     ipfs.on('ready', () => {
       console.log('orbitdb ready');
-      app.orbitdb = new OrbitDB(ipfs);
-      resolve(app.orbitdb);
+      ORBITDB = new OrbitDB(ipfs);
+      resolve(ORBITDB);
     });
   });
 }
@@ -36,13 +45,13 @@ interface IThreadData {
   title: string;
 }
 
-export async function getThreadDb() {
+async function getThreadDb() {
   const orbit = await initOrbit();
-  if (!app.threaddb) {
-    app.threaddb = await orbit.eventlog('forum.threads');
-    await app.threaddb.load();
+  if (!THREADDB) {
+    THREADDB = await orbit.eventlog('forum.threads');
+    await THREADDB.load();
   }
-  return app.threaddb;
+  return THREADDB;
 }
 
 export async function makeThread(author: string, title: string) {
@@ -52,51 +61,47 @@ export async function makeThread(author: string, title: string) {
   });
 }
 
-async function loadThreads(db) {
+export async function loadThreads(): Promise<Thread[]> {
+  const db = await getThreadDb();
   const options = { limit: -1, gt: undefined };
-  if (app.maxthreadhash) {
-    options.gt = app.maxthreadhash;
+  if (MAXTHREADHASH) {
+    options.gt = MAXTHREADHASH;
   }
   const items = db.iterator(options).collect();
   if (items.length > 0) {
-    app.maxthreadhash = items[items.length - 1].hash;
+    MAXTHREADHASH = items[items.length - 1].hash;
   }
-  for (const e of items) {
+  const threads: Array<Promise<Thread>> = items.map(async (e) => {
     const hash = e.hash;
     const data: IThreadData = e.payload.value;
     const author = data.author;
     const title = data.title;
-    if (!app.threads.getByHash(hash)) {
-      const thread = new Thread(hash, author, title);
-      app.threads.add(thread);
-      await subscribeComments(thread);
+    let thread = THREADSTORE.getByHash(hash);
+    if (!thread) {
+      thread = new Thread(hash, author, title);
+      THREADSTORE.add(thread);
+      await addCommentEventHandler(thread, COMMENTHANDLER);
+      await loadComments(thread);
     }
-  }
-}
-
-export async function subscribeThreads() {
-  const db = await getThreadDb();
-  await loadThreads(db);
-  db.events.on('write', (addr) => {
-    console.log('write to: ', addr);
-    loadThreads(db);
+    return thread;
   });
+  return Promise.all(threads);
 }
 
 // --------
 // Comments
 // --------
 
-export async function getCommentsDb(thread: Thread) {
+async function getCommentsDb(thread: Thread) {
   const orbit = await initOrbit();
-  if (!app.commentdbs[thread.hash]) {
+  if (!COMMENTDBS[thread.hash]) {
     // we need to use the base-58 hash here, because orbitdb only accepts b58
     // strings as database names.
     const logName = `forum.comments.${thread.b58hash}`;
-    app.commentdbs[thread.hash] = await orbit.eventlog(logName);
-    await app.commentdbs[thread.hash].load();
+    COMMENTDBS[thread.hash] = await orbit.eventlog(logName);
+    await COMMENTDBS[thread.hash].load();
   }
-  return app.commentdbs[thread.hash];
+  return COMMENTDBS[thread.hash];
 }
 
 interface ICommentData {
@@ -112,14 +117,15 @@ export async function makeComment(thread: Thread, author: string, comment: strin
   });
 }
 
-export function loadComments(db, thread: Thread) {
+async function loadComments(thread: Thread): Promise<ICommentData[]> {
+  const db = await getCommentsDb(thread);
   const options = { limit: -1, gt: undefined };
-  if (app.maxcommenthash[thread.hash]) {
-    options.gt = app.maxcommenthash[thread.hash];
+  if (MAXCOMMENTHASH[thread.hash]) {
+    options.gt = MAXCOMMENTHASH[thread.hash];
   }
   const items = db.iterator(options).collect();
   if (items.length > 0) {
-    app.maxcommenthash[thread.hash] = items[items.length - 1].hash;
+    MAXCOMMENTHASH[thread.hash] = items[items.length - 1].hash;
   }
   return items.map((e) => {
     const hash = e.hash;
@@ -127,14 +133,28 @@ export function loadComments(db, thread: Thread) {
     const comment = data.comment;
     const author = data.author;
     thread.addComment(hash, author, comment);
+    return data;
   });
 }
 
-export async function subscribeComments(thread: Thread) {
+async function addCommentEventHandler(thread, handler) {
   const db = await getCommentsDb(thread);
-  loadComments(db, thread);
-  db.events.on('write', (addr) => {
-    console.log('write to: ', addr);
-    loadComments(db, thread);
+  db.events.on('write', async (addr) => {
+    const comments = await loadComments(thread);
+    console.log('invoking comment handler');
+    handler(comments);
   });
+}
+
+export async function addEventHandlers(threadHandler, commentHandler) {
+  const db = await getThreadDb();
+  db.events.on('write', async (addr) => {
+    const threads = await loadThreads();
+    threadHandler(threads);
+  });
+  COMMENTHANDLER = commentHandler;
+}
+
+export function getThreadStore() {
+  return THREADSTORE;
 }

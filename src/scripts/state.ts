@@ -1,6 +1,4 @@
 import * as m from 'mithril';
-import { ThreadsStore } from 'models/stores';
-import { subscribeThreads } from 'controllers/orbitdb';
 
 /*
  * state
@@ -9,18 +7,9 @@ import { subscribeThreads } from 'controllers/orbitdb';
 // Mithril style global state store
 // TODO: replace with a real React state store
 const app = {
-  orbitdb: null,
-  threaddb: null,
-  maxthreadhash: null,
-  commentdbs: {},
-  maxcommenthash: {},
-
   vm: {
 
   },
-
-  // stores
-  threads: null,
 
   // routing hack to fix m.route.set()
   route: {
@@ -36,13 +25,4 @@ const app = {
   }
 };
 
-app.threads = new ThreadsStore();
-
 export default app;
-
-async function initServices() {
-  await subscribeThreads();
-  m.redraw();
-}
-
-initServices();
