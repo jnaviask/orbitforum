@@ -1,4 +1,4 @@
-const bs58 = require('bs58')
+const bs58 = require('bs58');
 
 class ThreadComment {
   public author: string;

@@ -16,6 +16,7 @@
         "object-literal-sort-keys": false,
         "typedef-whitespace": false,
         "object-literal-shorthand": false,
+        "no-var-requires": false,
         "space-before-function-paren": [false, {
             "anonymous": "never",
             "named": "never",

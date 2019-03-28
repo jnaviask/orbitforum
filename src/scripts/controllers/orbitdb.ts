@@ -1,10 +1,7 @@
-import * as m from 'mithril';
-const IPFS = require('ipfs')
-const OrbitDB = require('orbit-db')
+const IPFS = require('ipfs');
+const OrbitDB = require('orbit-db');
 import app from 'state';
-import { EventStore } from 'orbit-db-eventstore';
 import { Thread } from 'models/thread';
-import { Store } from 'orbit-db-store';
 
 const ipfsOptions = {
   EXPERIMENTAL: {
@@ -55,7 +52,7 @@ export async function makeThread(author: string, title: string) {
   });
 }
 
-function loadThreads(db) {
+async function loadThreads(db) {
   const options = { limit: -1, gt: undefined };
   if (app.maxthreadhash) {
     options.gt = app.maxthreadhash;
@@ -63,24 +60,23 @@ function loadThreads(db) {
   const items = db.iterator(options).collect();
   if (items.length > 0) {
     app.maxthreadhash = items[items.length - 1].hash;
-    items.map((e) => {
-      const hash = e.hash;
-      const data: IThreadData = e.payload.value;
-      const author = data.author;
-      const title = data.title;
-      if (!app.threads.getByHash(hash)) {
-        const thread = new Thread(hash, author, title);
-        app.threads.add(thread);
-        subscribeComments(thread);
-      }
-    });
   }
-  m.redraw();
+  for (const e of items) {
+    const hash = e.hash;
+    const data: IThreadData = e.payload.value;
+    const author = data.author;
+    const title = data.title;
+    if (!app.threads.getByHash(hash)) {
+      const thread = new Thread(hash, author, title);
+      app.threads.add(thread);
+      await subscribeComments(thread);
+    }
+  }
 }
 
 export async function subscribeThreads() {
   const db = await getThreadDb();
-  loadThreads(db);
+  await loadThreads(db);
   db.events.on('write', (addr) => {
     console.log('write to: ', addr);
     loadThreads(db);
@@ -116,7 +112,7 @@ export async function makeComment(thread: Thread, author: string, comment: strin
   });
 }
 
-export async function loadComments(db, thread: Thread) {
+export function loadComments(db, thread: Thread) {
   const options = { limit: -1, gt: undefined };
   if (app.maxcommenthash[thread.hash]) {
     options.gt = app.maxcommenthash[thread.hash];
@@ -124,15 +120,14 @@ export async function loadComments(db, thread: Thread) {
   const items = db.iterator(options).collect();
   if (items.length > 0) {
     app.maxcommenthash[thread.hash] = items[items.length - 1].hash;
-    items.map((e) => {
-      const hash = e.hash;
-      const data: ICommentData = e.payload.value;
-      const comment = data.comment;
-      const author = data.author;
-      thread.addComment(hash, author, comment);
-      m.redraw();
-    });
   }
+  return items.map((e) => {
+    const hash = e.hash;
+    const data: ICommentData = e.payload.value;
+    const comment = data.comment;
+    const author = data.author;
+    thread.addComment(hash, author, comment);
+  });
 }
 
 export async function subscribeComments(thread: Thread) {

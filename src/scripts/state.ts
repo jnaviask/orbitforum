@@ -1,6 +1,6 @@
 import * as m from 'mithril';
 import { ThreadsStore } from 'models/stores';
-import { subscribeThreads, makeThread } from 'controllers/orbitdb';
+import { subscribeThreads } from 'controllers/orbitdb';
 
 /*
  * state
@@ -42,6 +42,7 @@ export default app;
 
 async function initServices() {
   await subscribeThreads();
+  m.redraw();
 }
 
 initServices();

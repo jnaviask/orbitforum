@@ -8,7 +8,6 @@ import { makeComment } from 'controllers/orbitdb';
 const ThreadComments = {
   view: (vnode) => {
     const thread: Thread = vnode.attrs.thread;
-    console.log(thread.comments);
 
     return m('.ThreadComments', [
       thread.comments.map((c) => m(
