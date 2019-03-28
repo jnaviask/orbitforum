@@ -25,6 +25,7 @@ const app = {
   // routing hack to fix m.route.set()
   route: {
     set: (path, data?, options?) => {
+      console.log(path);
       m.route.set(path, data, options);
       window.scrollTo(0, 0);
     },

@@ -10,11 +10,10 @@ const ThreadRow = {
 
     return m('.ThreadRow', {
       key: thread.hash,
-      /*
       onclick: (e) => {
         e.preventDefault();
-        app.route.set('/thread/:hash', { hash: thread.hash });
-      }*/
+        m.route.set('/' + thread.hash);
+      }
     }, [
       m('.thread-title', [
         thread.title,

@@ -130,6 +130,7 @@ export async function loadComments(db, thread: Thread) {
       const comment = data.comment;
       const author = data.author;
       thread.addComment(hash, author, comment);
+      m.redraw();
     });
   }
 }
