@@ -85,7 +85,8 @@ export class ForumDatabase {
 
   public async makeThread(author: string, title: string) {
     const db = await this.getThreadDb();
-    return db.add({ author: author, title: title }).then(() => {
+    const threadObj: IThreadData = { author: author, title: title };
+    return db.add(threadObj).then(() => {
       console.log(`thread ${author}:${title} added to ipfs store`);
     });
   }
@@ -188,7 +189,8 @@ export class ForumDatabase {
         console.log('invoking thread handler');
         this.threadHandler();
       });
-      this.threadDb.events.on('replicated', (addr) => {
+      this.threadDb.events.on('replicated', async (addr) => {
+        const threads = await this.initThreads();
         console.log(`replicated database ${addr} with peer`);
         this.threadHandler();
       });
@@ -220,7 +222,8 @@ export class ForumDatabase {
         console.log('invoking comment handler');
         this.commentHandler();
       });
-      this.commentDbs[thread.hash].events.on('replicated', (addr) => {
+      this.commentDbs[thread.hash].events.on('replicated', async (addr) => {
+        const comments = await this.initComments(thread);
         console.log(`replicated database ${addr} with peer`);
         this.commentHandler();
       });
