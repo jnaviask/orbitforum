@@ -16,10 +16,12 @@ import { ForumDatabase } from 'controllers/database';
 import { Thread } from 'models/thread';
 
 async function initServices() {
-  const redraw = () => m.redraw();
-  app.forum = new ForumDatabase('QmYkHL25rrTvt52udjbwhfq6DFWujsEdNbb7hGrsTtGyC2', redraw, redraw);
-  const threads = await app.forum.loadThreads();
-  console.log('got threads: ', threads);
+  const redraw = () => {
+    m.redraw();
+    console.log('redrawn');
+  };
+  app.forum = new ForumDatabase(redraw, redraw, 'QmeKkw34hDtA4fXWQyFMiqWPKqihQnUgdn5bXG8b76nobY');
+  const threads = await app.forum.initThreads();
   m.redraw();
 }
 

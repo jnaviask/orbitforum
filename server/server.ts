@@ -7,19 +7,14 @@ program.version(version)
   .usage('[ARGS...]')
   .arguments('[args...]')
   .action(async (args: string[]) => {
-    if (!program.create_new && !program.address) {
-      console.log('Error: must provide either address or create-new flag.');
-      process.exit(1);
-    }
     const dummy = () => { return; };
-    const forum = new ForumDatabase(program.address, dummy, dummy, program.create_new);
+    const forum = new ForumDatabase(dummy, dummy, program.address);
     console.log(`forum constructed with address ${forum.getAddress()}`);
-    const threads = await forum.loadThreads();
+    const threads = await forum.initThreads();
     console.log('threads loaded');
     console.log(threads);
   })
-  .option('-c, --create-new', 'Create a new forum address.')
-  .option('-a, --address <address>', 'The forum address to use.')
+  .option('-a, --address <address>', 'The forum address to use. Omit to create new.')
 ;
 
 program.parse(process.argv);

@@ -31,19 +31,10 @@ export class ForumDatabase {
   private threadHandler: () => void;
   private address: string;
 
-  constructor(address: string, threadHandler: () => void, commentHandler: () => void, createNew?) {
-    this.address = address;
+  constructor(threadHandler: () => void, commentHandler: () => void, address?: string) {
     this.threadHandler = threadHandler;
     this.commentHandler = commentHandler;
-
-    // install event handler
-    this.getThreadDb(createNew).then((db) => {
-      db.events.on('write', async (addr) => {
-        const threads = await this.loadThreads();
-        this.threadHandler();
-      });
-    });
-    console.log('end of constructor');
+    this.address = address;
   }
 
   public getAddress(): string {
@@ -57,7 +48,7 @@ export class ForumDatabase {
     });
   }
 
-  public async loadThreads(): Promise<Thread[]> {
+  public async initThreads(): Promise<Thread[]> {
     const db = await this.getThreadDb();
     const options = { limit: -1, gt: undefined };
     if (this.maxThreadHash) {
@@ -76,12 +67,7 @@ export class ForumDatabase {
       if (!thread) {
         thread = new Thread(hash, author, title);
         this.threadStore.add(thread);
-        db.events.on('write', async (addr) => {
-          const comments = await this.loadComments(thread);
-          console.log('invoking comment handler');
-          this.commentHandler();
-        });
-        await this.loadComments(thread);
+        await this.initComments(thread);
       }
       return thread;
     });
@@ -96,7 +82,7 @@ export class ForumDatabase {
     });
   }
 
-  public async loadComments(thread: Thread): Promise<ICommentData[]> {
+  public async initComments(thread: Thread): Promise<ICommentData[]> {
     const db = await this.getCommentsDb(thread);
     const options = { limit: -1, gt: undefined };
     if (this.maxCommentHash[thread.hash]) {
@@ -134,21 +120,34 @@ export class ForumDatabase {
     });
   }
 
-  private async getThreadDb(createNew?) {
+  private async getThreadDb() {
     const orbit = await this.initOrbit();
     if (!this.threadDb) {
+      const createNew = !this.address;
       if (createNew) {
         this.threadDb = await orbit.eventlog('forum.threads');
       } else {
         // TODO: debug why this address doesn't work
-        this.threadDb = await orbit.eventlog(`/orbitdb/${this.address}/orbitdb/forum.threads`);
+        const address = `/orbitdb/${this.address}/forum.threads`;
+        if (!OrbitDB.isValidAddress(address)) {
+          throw new Error('invalid address');
+        }
+        this.threadDb = await orbit.eventlog(address);
       }
       await this.threadDb.load();
+
+      // install event handler
+      this.threadDb.events.on('write', async (addr) => {
+        const threads = await this.initThreads();
+        console.log('invoking thread handler');
+        this.threadHandler();
+      });
+
       if (createNew) {
-        this.address = this.threadDb.uid;
+        this.address = this.threadDb.address.root;
         console.log(`created new forum with address: ${this.address}`);
       } else {
-        console.log(`got new forum with address: ${this.threadDb.uid}`);
+        console.log(`got existing forum with address: ${this.threadDb.id}`);
       }
     }
     return this.threadDb;
@@ -162,6 +161,11 @@ export class ForumDatabase {
       const logName = `forum.comments.${thread.b58hash}`;
       this.commentDbs[thread.hash] = await orbit.eventlog(logName);
       await this.commentDbs[thread.hash].load();
+      this.commentDbs[thread.hash].events.on('write', async (addr) => {
+        const comments = await this.initComments(thread);
+        console.log('invoking comment handler');
+        this.commentHandler();
+      });
     }
     return this.commentDbs[thread.hash];
   }
