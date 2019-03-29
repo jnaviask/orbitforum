@@ -1,4 +1,4 @@
-import { loadThreads, addEventHandlers, getThreadStore } from './src/scripts/controllers/orbitdb';
+import { loadThreads, addEventHandlers, getThreadStore } from '../client/scripts/controllers/orbitdb';
 
 addEventHandlers((threads) => {
   console.log('threads refreshed');

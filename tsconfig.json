@@ -6,11 +6,11 @@
     "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "outDir": "./build",
-    "baseUrl": "./src/scripts"
+    "baseUrl": "./client/scripts"
   },
   "include": [
-    "./src",
-    "./src/scripts"
+    "./client",
+    "./client/scripts"
   ],
   "exclude": [
     "./node_modules"

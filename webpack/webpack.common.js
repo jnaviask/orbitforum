@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    app: Path.resolve(__dirname, '../src/scripts/app.ts')
+    app: Path.resolve(__dirname, '../client/scripts/app.ts')
   },
   output: {
     path: Path.join(__dirname, '../build'),
@@ -24,28 +24,28 @@ module.exports = {
       { from: Path.resolve(__dirname, 'now.json'), to: '.' }
     ]),
     new HtmlWebpackPlugin({
-      template: Path.resolve(__dirname, '../src/index.html')
+      template: Path.resolve(__dirname, '../client/index.html')
     })
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    modules: ['../src/scripts', '../src', '../node_modules'],
+    modules: ['../client/scripts', '../client', '../node_modules'],
     alias: {
-      '~': Path.resolve(__dirname, '../src')
+      '~': Path.resolve(__dirname, '../client')
     }
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        include: Path.resolve(__dirname, '../src'),
+        include: Path.resolve(__dirname, '../client'),
         use: {
           loader: "awesome-typescript-loader"
         }
       },
       {
         test: /\.(js)$/,
-        include: Path.resolve(__dirname, '../src'),
+        include: Path.resolve(__dirname, '../client'),
         use: {
           loader: 'babel-loader'
         }
