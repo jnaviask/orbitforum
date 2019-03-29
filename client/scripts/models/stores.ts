@@ -18,4 +18,8 @@ export class ThreadsStore {
   public getByHash(hash: string) {
     return this._storeHash[hash];
   }
+  public clear() {
+    this._store = [];
+    this._storeHash = {};
+  }
 }

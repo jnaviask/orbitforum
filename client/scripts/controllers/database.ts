@@ -4,10 +4,20 @@ import { Thread } from '../models/thread';
 import { ThreadsStore } from '../models/stores';
 
 const ipfsOptions = {
+  start: true,
   EXPERIMENTAL: {
     pubsub: true
-  }
+  },
+  relay: {
+    enabled: true, // enable circuit relay dialer and listener
+    hop: {
+      enabled: true // enable circuit relay HOP (make this node a relay)
+    }
+  },
+  pubsub: true
 };
+
+const MASTER_MULTIADDR = '/ip4/18.224.5.129/tcp/4003/ws/ipfs/QmXowghbaSpMu9esJGZy18nNjKnovmpaB1bUKg6hbvCzPW';
 
 interface IThreadData {
   author: string;
@@ -25,13 +35,15 @@ export class ForumDatabase {
   private orbitDb = null;
   private threadDb = null;
   private maxThreadHash = null;
-  private readonly commentDbs = {};
-  private readonly maxCommentHash = {};
+  private readonly commentDbs: object = {};
+  private readonly maxCommentHash: object = {};
   private commentHandler: () => void;
   private threadHandler: () => void;
   private address: string;
+  private isMaster: boolean;
 
-  constructor(threadHandler: () => void, commentHandler: () => void, address?: string) {
+  constructor(isMaster: boolean, threadHandler: () => void, commentHandler: () => void, address?: string) {
+    this.isMaster = isMaster;
     this.threadHandler = threadHandler;
     this.commentHandler = commentHandler;
     this.address = address;
@@ -39,6 +51,31 @@ export class ForumDatabase {
 
   public getAddress(): string {
     return this.address;
+  }
+
+  public async drop(thread?: Thread) {
+    if (!thread) {
+      // drop everything
+      for (const commentdb of Object.values(this.commentDbs)) {
+        await commentdb.drop();
+      }
+      for (const addr of Object.keys(this.commentDbs)) {
+        delete this.commentDbs[addr];
+      }
+      for (const addr of Object.keys(this.maxCommentHash)) {
+        delete this.maxCommentHash[addr];
+      }
+      await this.threadDb.drop();
+      this.threadDb = null;
+      thread.comments = [];
+      this.commentHandler();
+    } else {
+      await this.commentDbs[thread.hash].drop();
+      delete this.commentDbs[thread.hash];
+      this.maxThreadHash = null;
+      this.threadStore.clear();
+      this.threadHandler();
+    }
   }
 
   public async makeThread(author: string, title: string) {
@@ -109,10 +146,15 @@ export class ForumDatabase {
         return;
       }
       const ipfs = new IPFS(ipfsOptions);
+      // AWS box
+      ipfs.bootstrap.add('/ip4/18.224.5.129/tcp/4003/ws/ipfs/QmXowghbaSpMu9esJGZy18nNjKnovmpaB1bUKg6hbvCzPW');
       ipfs.on('error', (err) => {
         reject(err);
       });
-      ipfs.on('ready', () => {
+      ipfs.on('ready', async () => {
+        if (!this.isMaster) {
+          await ipfs.swarm.connect(MASTER_MULTIADDR);
+        }
         console.log('orbitdb ready');
         this.orbitDb = new OrbitDB(ipfs);
         resolve(this.orbitDb);
@@ -141,18 +183,10 @@ export class ForumDatabase {
         console.log('invoking thread handler');
         this.threadHandler();
       });
-      this.threadDb.events.on('replicate', (addr) => {
-        console.log(`replicating database ${addr} with peer`);
-      });
       this.threadDb.events.on('replicated', (addr) => {
         console.log(`replicated database ${addr} with peer`);
+        this.threadHandler();
       });
-      /*this.threadDb.events.on('load', (addr) => {
-        console.log(`loading database ${addr}`);
-      });
-      this.threadDb.events.on('ready', (addr) => {
-        console.log(`database ${addr} is ready`);
-      });*/
       this.threadDb.events.on('closed', (addr) => {
         console.log(`database ${addr} has closed`);
       });
@@ -181,23 +215,13 @@ export class ForumDatabase {
         console.log('invoking comment handler');
         this.commentHandler();
       });
-      /*
-      this.commentDbs[thread.hash].events.on('replicate', (addr) => {
-        console.log(`replicating database ${addr} with peer`);
-      });
       this.commentDbs[thread.hash].events.on('replicated', (addr) => {
         console.log(`replicated database ${addr} with peer`);
-      });
-      this.commentDbs[thread.hash].events.on('load', (addr) => {
-        console.log(`loading database ${addr}`);
-      });
-      this.commentDbs[thread.hash].events.on('ready', (addr) => {
-        console.log(`database ${addr} is ready`);
+        this.commentHandler();
       });
       this.commentDbs[thread.hash].events.on('closed', (addr) => {
         console.log(`database ${addr} has closed`);
       });
-      */
 
       await this.commentDbs[thread.hash].load();
     }

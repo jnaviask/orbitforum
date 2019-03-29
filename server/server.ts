@@ -8,7 +8,7 @@ program.version(version)
   .arguments('[args...]')
   .action(async (args: string[]) => {
     const dummy = () => { return; };
-    const forum = new ForumDatabase(dummy, dummy, program.address);
+    const forum = new ForumDatabase(true, dummy, dummy, program.address);
     console.log(`forum constructed with address ${forum.getAddress()}`);
     const threads = await forum.initThreads();
     console.log('threads loaded');

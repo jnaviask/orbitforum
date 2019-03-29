@@ -56,6 +56,11 @@ const MainPage = {
               app.forum.makeThread(vnode.attrs.author, vnode.attrs.title);
             },
           }, 'Submit'),
+          m('button', {
+            onclick: () => {
+              app.forum.drop();
+            },
+          }, 'Clear All'),
         ]),
         threads.length > 0 ?
           threads.reverse().map((thread) => m(ThreadRow, { thread: thread })) :

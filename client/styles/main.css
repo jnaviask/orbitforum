@@ -14,6 +14,10 @@
   color: #777;
 }
 
+.MainPage button {
+  margin-left: 5px;
+}
+
 .thread-create input {
   margin-right: 10px;
 }
