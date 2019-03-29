@@ -12,14 +12,14 @@ The forum itself has two components:
 
 * A server, which replicates all content from peers and "pins" it, persisting the contents and providing a source for the data. Note that any user can run a server for a particular forum. In theory, every user with a stake in the community could have their own persistent forum server to ensure the forum remains accessible.
 
-* A client, which represents the main user interface to the forum. This includes a local database, which is replicated to and from a server in a bidirectional fashion. The client would also interface with the chosen identity provider.
+* A client, which represents the main user interface to the forum. This includes a local database, which is replicated to and from a server (currently my AWS box is acting as this bootnode) in a bidirectional fashion. The client would also interface with the chosen identity provider.
 
 # Usage
 
-Running the server: `yarn server`
+Running the server: `yarn server [-a dbAddressHash]` (the `-a` flag allows you to replicate your server from another node)
 
 Running the client: `yarn client`
 
 # Development Status
 
-Posting threads and comments is tentatively working, at least locally. Server replication does not work as of yet, and will be implemented alongside address (forum) selection. Identity is on hold until the other aspects are stable.
+Posting threads and comments is tentatively working, at least locally. Server replication works, but there is no way yet to select or input an address (forum): it must be hard-coded. Identity is on hold until the other aspects are stable.
