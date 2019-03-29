@@ -17,6 +17,11 @@ const ipfsOptions = {
   pubsub: true
 };
 
+const dbAccess = {
+  // Give write access to everyone
+  write: ['*']
+};
+
 const MASTER_MULTIADDR = '/ip4/18.224.5.129/tcp/4003/ws/ipfs/QmXowghbaSpMu9esJGZy18nNjKnovmpaB1bUKg6hbvCzPW';
 
 interface IThreadData {
@@ -167,14 +172,14 @@ export class ForumDatabase {
     if (!this.threadDb) {
       const createNew = !this.address;
       if (createNew) {
-        this.threadDb = await orbit.eventlog('forum.threads');
+        this.threadDb = await orbit.eventlog('forum.threads', dbAccess);
       } else {
         // TODO: debug why this address doesn't work
         const address = `/orbitdb/${this.address}/forum.threads`;
         if (!OrbitDB.isValidAddress(address)) {
           throw new Error('invalid address');
         }
-        this.threadDb = await orbit.eventlog(address);
+        this.threadDb = await orbit.eventlog(address, dbAccess);
       }
 
       // install event handler
@@ -208,7 +213,7 @@ export class ForumDatabase {
       // we need to use the base-58 hash here, because orbitdb only accepts b58
       // strings as database names.
       const logName = `forum.comments.${thread.b58hash}`;
-      this.commentDbs[thread.hash] = await orbit.eventlog(logName);
+      this.commentDbs[thread.hash] = await orbit.eventlog(logName, dbAccess);
 
       this.commentDbs[thread.hash].events.on('write', async (addr) => {
         const comments = await this.initComments(thread);

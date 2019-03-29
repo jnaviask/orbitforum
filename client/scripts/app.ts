@@ -20,7 +20,7 @@ async function initServices() {
     m.redraw();
     console.log('redrawn');
   };
-  app.forum = new ForumDatabase(false, redraw, redraw, 'QmeKkw34hDtA4fXWQyFMiqWPKqihQnUgdn5bXG8b76nobY');
+  app.forum = new ForumDatabase(false, redraw, redraw, 'QmP8Kvg6EoeF6SZPLkQeczBesuucTAHVWNtzayPAtBtYWQ');
   const threads = await app.forum.initThreads();
   m.redraw();
 }
