@@ -185,13 +185,17 @@ export class ForumDatabase {
 
       // install event handler
       this.threadDb.events.on('write', async (addr) => {
+        const nThreads = this.threadStore.size();
         const threads = await this.initThreads();
-        console.log('invoking thread handler');
+        const newThreads = threads.length - nThreads;
+        console.log(`write received, found ${newThreads} new threads`);
         this.threadHandler();
       });
       this.threadDb.events.on('replicated', async (addr) => {
+        const nThreads = this.threadStore.size();
         const threads = await this.initThreads();
-        console.log(`replicated database ${addr} with peer`);
+        const newThreads = threads.length - nThreads;
+        console.log(`replicated database ${addr} with peer, found ${newThreads} new threads`);
         this.threadHandler();
       });
       this.threadDb.events.on('closed', (addr) => {

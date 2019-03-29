@@ -22,4 +22,7 @@ export class ThreadsStore {
     this._store = [];
     this._storeHash = {};
   }
+  public size() {
+    return this._store.length;
+  }
 }

@@ -11,8 +11,7 @@ program.version(version)
     const forum = new ForumDatabase(true, dummy, dummy, program.address);
     console.log(`forum constructed with address ${forum.getAddress()}`);
     const threads = await forum.initThreads();
-    console.log('threads loaded');
-    console.log(threads);
+    console.log(`found ${threads.length} threads!`);
   })
   .option('-a, --address <address>', 'The forum address to use. Omit to create new.')
 ;
