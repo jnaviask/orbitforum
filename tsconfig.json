@@ -6,7 +6,8 @@
     "module": "commonjs",
     "allowSyntheticDefaultImports": true,
     "outDir": "./build",
-    "baseUrl": "./client/scripts"
+    "baseUrl": "./client/scripts",
+    "resolveJsonModule": true
   },
   "include": [
     "./client",

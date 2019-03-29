@@ -12,11 +12,14 @@ import MainPage from 'views/main';
 import ViewThreadPage from 'views/view_thread';
 
 import { notifyError } from 'controllers/notifications';
-import { getThreadStore, addEventHandlers, loadThreads } from 'controllers/orbitdb';
+import { ForumDatabase } from 'controllers/database';
+import { Thread } from 'models/thread';
 
 async function initServices() {
-  await addEventHandlers(() => m.redraw(), () => m.redraw());
-  await loadThreads();
+  const redraw = () => m.redraw();
+  app.forum = new ForumDatabase('QmYkHL25rrTvt52udjbwhfq6DFWujsEdNbb7hGrsTtGyC2', redraw, redraw);
+  const threads = await app.forum.loadThreads();
+  console.log('got threads: ', threads);
   m.redraw();
 }
 
@@ -42,9 +45,9 @@ $(() => {
     },
     '/:hash': {
       render: (vnode) => {
-        let thread;
+        let thread: Thread;
         try {
-          thread = getThreadStore().getByHash(vnode.attrs.hash);
+          thread = app.forum.threadStore.getByHash(vnode.attrs.hash);
         } catch (e) {
           return m(Layout, [ m(PageNotFound) ]);
         }

@@ -3,7 +3,6 @@ import 'styles/view_thread.scss';
 import * as m from 'mithril';
 import app from 'state';
 import { Thread } from 'models/thread';
-import { makeComment } from 'controllers/orbitdb';
 
 const ThreadComments = {
   view: (vnode) => {
@@ -34,7 +33,7 @@ const ThreadComments = {
         }),
         m('button', {
           onclick: () => {
-            makeComment(thread, vnode.attrs.author, vnode.attrs.comment);
+            app.forum.makeComment(thread, vnode.attrs.author, vnode.attrs.comment);
           },
         }, 'Submit'),
       ])

@@ -2,11 +2,11 @@ import 'styles/main.css';
 
 import * as m from 'mithril';
 import app from 'state';
-import { makeThread, getThreadStore } from 'controllers/orbitdb';
+import { Thread } from 'models/thread';
 
 const ThreadRow = {
   view: (vnode) => {
-    const thread = vnode.attrs.thread;
+    const thread: Thread = vnode.attrs.thread;
 
     return m('.ThreadRow', {
       key: thread.hash,
@@ -31,7 +31,7 @@ const ThreadRow = {
 
 const MainPage = {
   view: (vnode) => {
-    const threads = getThreadStore().getAll();
+    const threads = app.forum.threadStore.getAll();
     vnode.attrs.title = '';
     vnode.attrs.author = '';
     return m('.MainPage', [
@@ -53,7 +53,7 @@ const MainPage = {
           }),
           m('button', {
             onclick: () => {
-              makeThread(vnode.attrs.author, vnode.attrs.title);
+              app.forum.makeThread(vnode.attrs.author, vnode.attrs.title);
             },
           }, 'Submit'),
         ]),
