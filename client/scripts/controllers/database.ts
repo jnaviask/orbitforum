@@ -134,7 +134,6 @@ export class ForumDatabase {
         }
         this.threadDb = await orbit.eventlog(address);
       }
-      await this.threadDb.load();
 
       // install event handler
       this.threadDb.events.on('write', async (addr) => {
@@ -142,7 +141,23 @@ export class ForumDatabase {
         console.log('invoking thread handler');
         this.threadHandler();
       });
+      this.threadDb.events.on('replicate', (addr) => {
+        console.log(`replicating database ${addr} with peer`);
+      });
+      this.threadDb.events.on('replicated', (addr) => {
+        console.log(`replicated database ${addr} with peer`);
+      });
+      /*this.threadDb.events.on('load', (addr) => {
+        console.log(`loading database ${addr}`);
+      });
+      this.threadDb.events.on('ready', (addr) => {
+        console.log(`database ${addr} is ready`);
+      });*/
+      this.threadDb.events.on('closed', (addr) => {
+        console.log(`database ${addr} has closed`);
+      });
 
+      await this.threadDb.load();
       if (createNew) {
         this.address = this.threadDb.address.root;
         console.log(`created new forum with address: ${this.address}`);
@@ -160,12 +175,31 @@ export class ForumDatabase {
       // strings as database names.
       const logName = `forum.comments.${thread.b58hash}`;
       this.commentDbs[thread.hash] = await orbit.eventlog(logName);
-      await this.commentDbs[thread.hash].load();
+
       this.commentDbs[thread.hash].events.on('write', async (addr) => {
         const comments = await this.initComments(thread);
         console.log('invoking comment handler');
         this.commentHandler();
       });
+      /*
+      this.commentDbs[thread.hash].events.on('replicate', (addr) => {
+        console.log(`replicating database ${addr} with peer`);
+      });
+      this.commentDbs[thread.hash].events.on('replicated', (addr) => {
+        console.log(`replicated database ${addr} with peer`);
+      });
+      this.commentDbs[thread.hash].events.on('load', (addr) => {
+        console.log(`loading database ${addr}`);
+      });
+      this.commentDbs[thread.hash].events.on('ready', (addr) => {
+        console.log(`database ${addr} is ready`);
+      });
+      this.commentDbs[thread.hash].events.on('closed', (addr) => {
+        console.log(`database ${addr} has closed`);
+      });
+      */
+
+      await this.commentDbs[thread.hash].load();
     }
     return this.commentDbs[thread.hash];
   }
