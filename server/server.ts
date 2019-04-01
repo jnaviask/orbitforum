@@ -8,10 +8,10 @@ program.version(version)
   .arguments('[args...]')
   .action(async (args: string[]) => {
     const dummy = () => { return; };
-    const forum = new ForumDatabase(true, dummy, dummy, program.address);
+    const forum = new ForumDatabase(true, dummy, program.address);
     console.log(`forum constructed with address ${forum.getAddress()}`);
-    const threads = await forum.initThreads();
-    console.log(`found ${threads.length} threads!`);
+    await forum.init();
+    console.log(`forum init complete!`);
   })
   .option('-a, --address <address>', 'The forum address to use. Omit to create new.')
 ;
