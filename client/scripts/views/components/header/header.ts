@@ -31,7 +31,7 @@ const Header = {
           m(HeaderItem, {path: '/admin', label: 'Admin' }),
         ]),
         m('.header-right', [
-          m(HeaderItem, {path: '/login', label: 'Log In' }),
+          m(HeaderItem, {path: '/login', label: app.login.loggedIn ? 'Log Out' : 'Log In' }),
         ])
       ]),
     ]);

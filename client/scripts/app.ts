@@ -15,14 +15,15 @@ import AdminPage from 'views/pages/admin';
 import { notifyError } from 'controllers/notifications';
 import { ForumDatabase } from 'controllers/database';
 import { Thread } from 'models/thread';
+import LoginPage from 'views/pages/login';
 
 async function initServices() {
   const redraw = () => {
     m.redraw();
-    console.log('redrawn');
+    // console.log('redrawn');
   };
-  app.forum = new ForumDatabase(false, redraw, redraw, 'QmR95m2bKnZ7kkvSFYuhUtqcqMXhgHpYkPJv3VqLYezCgs');
-  const threads = await app.forum.initThreads();
+  app.forum = new ForumDatabase(false, redraw, 'QmR95m2bKnZ7kkvSFYuhUtqcqMXhgHpYkPJv3VqLYezCgs');
+  const threads = await app.forum.init();
   m.redraw();
 }
 
@@ -48,6 +49,9 @@ $(() => {
     },
     '/admin': {
       render: (vnode) => m(Layout, {lightBg: true}, [ m(AdminPage) ])
+    },
+    '/login': {
+      render: (vnode) => m(Layout, {lightBg: true}, [ m(LoginPage) ])
     },
     '/:hash': {
       render: (vnode) => {

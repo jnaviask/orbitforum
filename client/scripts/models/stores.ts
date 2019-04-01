@@ -1,34 +1,38 @@
-import { Thread } from './thread';
+export abstract class Hashable {
+  public readonly hash: string;
+}
 
-export class ThreadsStore {
-  private _store: Thread[];
-  private _storeHash: { [hash: string]: Thread };
+export class Store<T extends Hashable> {
+  private _store: T[];
+  private _storeHash: { [hash: string]: T };
 
   constructor() {
     this._store = [];
     this._storeHash = {};
   }
-  public add(thread: Thread) {
-    this._store.push(thread);
-    this._storeHash[thread.hash] = thread;
+  public add(t: T): Store<T> {
+    this._store.push(t);
+    this._storeHash[t.hash] = t;
+    return this;
   }
-  public getAll() {
+  public getAll(): T[] {
     return this._store;
   }
-  public getByHash(hash: string) {
+  public getByHash(hash: string): T {
     return this._storeHash[hash];
   }
-  public remove(thread: Thread) {
-    const index = this._store.indexOf(thread);
+  public remove(t: T): Store<T> {
+    const index = this._store.indexOf(t);
     if (index > -1) {
       this._store.splice(index, 1);
     }
+    return this;
   }
-  public clear() {
+  public clear(): void {
     this._store = [];
     this._storeHash = {};
   }
-  public size() {
+  public size(): number {
     return this._store.length;
   }
 }

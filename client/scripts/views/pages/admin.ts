@@ -6,15 +6,7 @@ const AdminPage = {
     return m('.AdminPage', [
       m('.container', [
         m('h3', 'Admin'),
-        m('p', 'Clear local thread cache'),
-        m('button', {
-          onclick: () => {
-            app.forum.drop().then(() => {
-              console.log('forum dropped!');
-              m.redraw();
-            });
-          },
-        }, 'Clear All'),
+        m('p', 'No admin functionality present'),
       ]),
     ]);
   }

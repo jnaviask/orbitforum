@@ -49,7 +49,7 @@ const ThreadComments = {
               notifyError('Comments must not be empty.');
               return;
             }
-            app.forum.makeComment(thread, vnode.attrs.author, vnode.attrs.comment);
+            app.forum.createComment(thread, vnode.attrs.author, vnode.attrs.comment);
 
             // clear input fields
             vnode.attrs.author = '';

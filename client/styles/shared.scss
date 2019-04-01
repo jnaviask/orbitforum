@@ -1,0 +1,19 @@
+@mixin formfield-base {
+  display: block;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  box-shadow: none;
+  &:focus {
+      border-color: #08c;
+  }
+}
+
+@mixin formfield-text {
+  @include formfield-base;
+  padding: 10px 10px;
+  &::placeholder {
+      color: #aaa;
+  }
+}

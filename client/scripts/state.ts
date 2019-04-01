@@ -1,5 +1,6 @@
 import * as m from 'mithril';
 import { ForumDatabase } from 'controllers/database';
+import { User } from 'models/user';
 
 /*
  * state
@@ -8,8 +9,9 @@ import { ForumDatabase } from 'controllers/database';
 // Mithril style global state store
 // TODO: replace with a real React state store
 interface IApp {
-  vm: {
-
+  login: {
+    loggedIn: boolean;
+    user?: User;
   };
   forum: ForumDatabase;
   route: {
@@ -19,8 +21,8 @@ interface IApp {
 }
 
 const app: IApp = {
-  vm: {
-
+  login: {
+    loggedIn: false,
   },
   forum: null,
 

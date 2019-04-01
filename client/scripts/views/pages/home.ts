@@ -62,7 +62,7 @@ const HomePage = {
                 notifyError('Threads must have both author and title.');
                 return;
               }
-              app.forum.makeThread(vnode.attrs.author, vnode.attrs.title);
+              app.forum.createThread(vnode.attrs.author, vnode.attrs.title);
             },
           }, 'Submit'),
         ]),
