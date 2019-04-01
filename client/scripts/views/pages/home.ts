@@ -1,8 +1,9 @@
-import 'styles/main.css';
+import 'styles/pages/home.scss';
 
 import * as m from 'mithril';
 import app from 'state';
 import { Thread } from 'models/thread';
+import { notifyError } from 'controllers/notifications';
 
 const ThreadRow = {
   view: (vnode) => {
@@ -15,28 +16,32 @@ const ThreadRow = {
         m.route.set('/' + thread.hash);
       }
     }, [
-      m('.thread-title', [
+      m('span.thread-title', [
         thread.title,
       ]),
-      m('.thread-meta', [
-        m('.thread-author', thread.author),
-        m('.thread-hash', thread.hash),
+      m('span.thread-meta', [
         m('.thread-comments', [
-          'Comments: ' + thread.comments.length
+          thread.comments.length + ' Replies'
         ]),
+        m('a.thread-author', {
+          // TODO: link to author's page
+          href: '#',
+          onclick: () => { app.route.set('/'); },
+        }, thread.author),
       ]),
     ]);
   }
 };
 
-const MainPage = {
+const HomePage = {
   view: (vnode) => {
     const threads = app.forum.threadStore.getAll();
     vnode.attrs.title = '';
     vnode.attrs.author = '';
-    return m('.MainPage', [
+    return m('.HomePage', [
       m('.container', [
         m('.thread-create', [
+          m('span.thread-new-topic', 'New Topic:'),
           m('input[type="text"]', {
             placeholder: '<Thread Title>',
             onchange: (e) => {
@@ -53,14 +58,13 @@ const MainPage = {
           }),
           m('button', {
             onclick: () => {
+              if (!vnode.attrs.author || !vnode.attrs.title) {
+                notifyError('Threads must have both author and title.');
+                return;
+              }
               app.forum.makeThread(vnode.attrs.author, vnode.attrs.title);
             },
           }, 'Submit'),
-          m('button', {
-            onclick: () => {
-              app.forum.drop();
-            },
-          }, 'Clear All'),
         ]),
         threads.length > 0 ?
           threads.reverse().map((thread) => m(ThreadRow, { thread: thread })) :
@@ -70,4 +74,4 @@ const MainPage = {
   }
 };
 
-export default MainPage;
+export default HomePage;

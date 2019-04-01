@@ -1,25 +1,30 @@
 /*
-* MainPage
+* HomePage
 */
-.MainPage {
+.HomePage {
   padding-bottom: 60px;
 }
-.MainPage .container {
+.HomePage .container {
   display: flex;
   flex-direction: column;
   padding-top: 30px;
 }
-.MainPage .empty-text {
+.HomePage .empty-text {
   margin: 12px 0;
   color: #777;
 }
 
-.MainPage button {
+.HomePage button {
   margin-left: 5px;
 }
 
-.thread-create input {
+.thread-create * {
   margin-right: 10px;
+}
+
+.thread-create .thread-new-topic {
+  font-size: 16px;
+  font-weight: 500;
 }
 
 /*
@@ -39,20 +44,16 @@
   z-index: 2;
 }
 .ThreadRow .thread-title {
+  display: inline-block;
   font-size: 16px;
-  margin-bottom: 4px;
   font-weight: 500;
-}
-.ThreadRow .thread-meta .thread-author {
-  position: relative;
-  top: 4px;
 }
 .ThreadRow .thread-meta .thread-author .user__display-name {
   font-weight: 400;
 }
 .ThreadRow .thread-meta {
   font-size: 14px;
-  display: flex;
+  float: right;
 }
 .ThreadRow .thread-meta .thread-author,
 .ThreadRow .thread-meta .thread-hash,

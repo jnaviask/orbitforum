@@ -18,6 +18,12 @@ export class ThreadsStore {
   public getByHash(hash: string) {
     return this._storeHash[hash];
   }
+  public remove(thread: Thread) {
+    const index = this._store.indexOf(thread);
+    if (index > -1) {
+      this._store.splice(index, 1);
+    }
+  }
   public clear() {
     this._store = [];
     this._storeHash = {};

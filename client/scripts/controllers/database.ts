@@ -59,27 +59,28 @@ export class ForumDatabase {
   }
 
   public async drop(thread?: Thread) {
+    const dropThread = async (t: Thread) => {
+      await this.commentDbs[t.hash].drop();
+      delete this.commentDbs[t.hash];
+      delete this.maxCommentHash[t.hash];
+      this.threadStore.remove(t);
+    };
     if (!thread) {
-      // drop everything
-      for (const commentdb of Object.values(this.commentDbs)) {
-        await commentdb.drop();
+      // drop all threads
+      for (const t of this.threadStore.getAll()) {
+        dropThread(t);
+        t.comments = [];
       }
-      for (const addr of Object.keys(this.commentDbs)) {
-        delete this.commentDbs[addr];
-      }
-      for (const addr of Object.keys(this.maxCommentHash)) {
-        delete this.maxCommentHash[addr];
-      }
+      this.threadStore.clear();
+
+      // drop global params
       await this.threadDb.drop();
       this.threadDb = null;
-      thread.comments = [];
-      this.commentHandler();
-    } else {
-      await this.commentDbs[thread.hash].drop();
-      delete this.commentDbs[thread.hash];
       this.maxThreadHash = null;
-      this.threadStore.clear();
       this.threadHandler();
+    } else {
+      dropThread(thread);
+      this.commentHandler();
     }
   }
 

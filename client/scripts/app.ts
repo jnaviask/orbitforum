@@ -7,9 +7,10 @@ import * as $ from 'jquery';
 import app from 'state';
 
 import { Layout } from 'views/layouts';
-import PageNotFound from 'views/404';
-import MainPage from 'views/main';
-import ViewThreadPage from 'views/view_thread';
+import PageNotFound from 'views/pages/404';
+import HomePage from 'views/pages/home';
+import ViewThreadPage from 'views/pages/view_thread';
+import AdminPage from 'views/pages/admin';
 
 import { notifyError } from 'controllers/notifications';
 import { ForumDatabase } from 'controllers/database';
@@ -41,9 +42,12 @@ $(() => {
     '/': {
       render: (vnode) => {
         return m(Layout, [
-          m(MainPage, { }),
+          m(HomePage, { }),
         ]);
       },
+    },
+    '/admin': {
+      render: (vnode) => m(Layout, {lightBg: true}, [ m(AdminPage) ])
     },
     '/:hash': {
       render: (vnode) => {
